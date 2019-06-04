@@ -7,6 +7,12 @@ import websockets
 conn_times = []
 ping_times = []
 
+servers = [
+    "139.59.136.182",
+    "165.22.89.205",
+    "165.227.167.134"
+]
+
 
 def write_conn_times():
     with open('conn_times.txt', 'w') as f:
@@ -21,7 +27,7 @@ def write_ping_times():
 
 
 async def connect_and_wait(task_name, task_number):
-    ip = random.choice(["139.59.136.182", "165.22.89.205"])
+    ip = random.choice(servers)
     port = 80
     websocket = await websockets.connect(f"ws://{ip}:{port}")
     conn_times.append(datetime.now())
@@ -29,7 +35,7 @@ async def connect_and_wait(task_name, task_number):
 
 
 async def connect_and_ping(task_name, task_number, sleep_time):
-    ip = random.choice(["139.59.136.182", "165.22.89.205"])
+    ip = random.choice(servers)
     port = 80
     websocket = await websockets.connect(f"ws://{ip}:{port}")
     while True:
@@ -44,7 +50,7 @@ async def connect_and_ping(task_name, task_number, sleep_time):
 
 def run_max_conn_test():
     tasks = []
-    for i in range(10):
+    for i in range(10000):
         tasks.append(connect_and_wait(f"task_{i}", i))
     try:
         asyncio.get_event_loop().run_until_complete(asyncio.wait(tasks))
@@ -63,4 +69,4 @@ def run_throughput_test():
 
 
 if __name__ == "__main__":
-    run_throughput_test()
+    run_max_conn_test() 
