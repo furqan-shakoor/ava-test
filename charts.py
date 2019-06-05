@@ -68,7 +68,7 @@ def plot_ping_times(timedelta_to_pingcount):
 
 def main():
     # plot_conn_times(load_conn_times(["p_1_conn_times_sc_1_10k.txt", "p_2_conn_times_sc_1_10k.txt"]))
-    plot_ping_times(load_ping_times(["ping_times.txt"]))
+    plot_ping_times(load_ping_times(["ping_times_sc_100processes_1server.txt"]))
 
 
 if __name__ == "__main__":

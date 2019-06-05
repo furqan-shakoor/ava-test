@@ -27,8 +27,9 @@ def write_conn_times():
 
 
 def write_ping_times():
+    ping_times_copy = ping_times.copy()
     with open('ping_times.txt', 'w') as f:
-        for request_time, response_time in ping_times:
+        for request_time, response_time in ping_times_copy:
             f.write(f"{str(request_time.timestamp())}, {str(response_time.timestamp())}, 1\n")
     print("File written")
 
