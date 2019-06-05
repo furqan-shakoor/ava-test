@@ -8,7 +8,7 @@ from socketclusterclient import Socketcluster
 
 import websockets
 
-conn_times = []
+conn_times = {}
 ping_times = []
 
 servers = [
@@ -30,13 +30,14 @@ def write_ping_times():
             f.write(f"{str(request_time.timestamp())}, {str(response_time.timestamp())}, 1\n")
 
 
-def connect_and_wait():
+def connect_and_wait(task_id):
     def onconnect(socket):
         print("CONNECTED")
-        conn_times.append(datetime.now())
+        conn_times[task_id] = datetime.now()
 
     def ondisconnect(socket):
         print("DISCONNECTED")
+        del conn_times[task_id]
 
     def onConnectError(socket, error):
         print(f"ERROR {error}")
@@ -64,7 +65,8 @@ async def connect_and_ping(task_name, task_number, sleep_time):
 def run_max_conn_test():
     pool = ThreadPoolExecutor(max_workers=5000)
     for i in range(5000):
-        pool.submit(connect_and_wait)
+        pool.submit(connect_and_wait, i)
+    return pool
 
 
 def run_throughput_test():
@@ -78,8 +80,9 @@ def run_throughput_test():
 
 
 if __name__ == "__main__":
+    thread_pool = None
     try:
-        run_max_conn_test()
+        thread_pool = run_max_conn_test()
     finally:
         time.sleep(20)
         print("Writing results")

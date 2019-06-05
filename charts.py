@@ -54,7 +54,10 @@ def main():
     # plot_conn_times(load_conn_times('conn_times_ava_3_10k.txt'))
     # plot_conn_times(load_conn_times('conn_times_ava_2_10k.txt'))
     plot_conn_times(load_conn_times("conn_times_sc_1_7k.txt"))
-    plot_conn_times(load_conn_times("conn_times.txt"))
+    plot_conn_times(load_conn_times("conn_times_sc_2_10k.txt"))
+    plot_conn_times(load_conn_times("conn_times_sc_3_10k.txt"))
+    # plot_conn_times(load_conn_times("conn_times_ava_2_10k.txt"))
+    # plot_conn_times(load_conn_times("conn_times_ava_3_10k.txt"))
 
 
 if __name__ == "__main__":
