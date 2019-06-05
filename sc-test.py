@@ -13,8 +13,8 @@ ping_times = []
 
 servers = [
     "139.59.136.182",
-    "165.22.89.205",
-    "165.227.167.134"
+    #"165.22.89.205",
+    #"165.227.167.134"
 ]
 
 
@@ -64,8 +64,8 @@ async def connect_and_ping(task_name, task_number, sleep_time):
 
 
 def run_max_conn_test():
-    pool = ThreadPoolExecutor(max_workers=5000)
-    for i in range(5000):
+    pool = ThreadPoolExecutor(max_workers=3000)
+    for i in range(3000):
         pool.submit(connect_and_wait, i)
     return pool
 
@@ -85,6 +85,7 @@ if __name__ == "__main__":
     try:
         thread_pool = run_max_conn_test()
     finally:
+        print("Sleeping")
         time.sleep(20)
         print("Writing results")
         write_conn_times()

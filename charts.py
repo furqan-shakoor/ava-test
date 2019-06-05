@@ -39,8 +39,8 @@ def load_ping_times(filename):
 
 def plot_conn_times(time_conn_cuml):
     pyplot.plot(list(time_conn_cuml.keys()), list(time_conn_cuml.values()))
-    # pyplot.ylim(0, 10000)
-    # pyplot.xlim(0, 15)
+    pyplot.ylim(0, 10000)
+    pyplot.xlim(0, 15)
     pyplot.show()
 
 
@@ -51,13 +51,8 @@ def plot_ping_times(timedelta_to_pingcount):
 
 
 def main():
-    # plot_conn_times(load_conn_times('conn_times_ava_3_10k.txt'))
-    # plot_conn_times(load_conn_times('conn_times_ava_2_10k.txt'))
-    plot_conn_times(load_conn_times("conn_times_sc_1_7k.txt"))
-    plot_conn_times(load_conn_times("conn_times_sc_2_10k.txt"))
-    plot_conn_times(load_conn_times("conn_times_sc_3_10k.txt"))
-    # plot_conn_times(load_conn_times("conn_times_ava_2_10k.txt"))
-    # plot_conn_times(load_conn_times("conn_times_ava_3_10k.txt"))
+    plot_conn_times(load_conn_times('conn_times_sc_1_3k.txt'))
+    plot_conn_times(load_conn_times('conn_times_ava_1_10k.txt'))
 
 
 if __name__ == "__main__":
