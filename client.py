@@ -1,7 +1,6 @@
 import asyncio
 import random
 from datetime import datetime
-from socketclusterclient import Socketcluster
 
 import websockets
 
@@ -30,7 +29,7 @@ def write_ping_times():
 async def connect_and_wait(task_name, task_number):
     ip = random.choice(servers)
     port = 80
-    websocket = await websockets.connect(f"ws://{ip}:{port}")
+    websocket = await websockets.connect(f"ws://{ip}:{port}/socketcluster/")
     conn_times.append(datetime.now())
     await websocket.recv()
 
@@ -51,7 +50,7 @@ async def connect_and_ping(task_name, task_number, sleep_time):
 
 def run_max_conn_test():
     tasks = []
-    for i in range(1):
+    for i in range(1000):
         tasks.append(connect_and_wait(f"task_{i}", i))
     try:
         asyncio.get_event_loop().run_until_complete(asyncio.wait(tasks))
@@ -70,19 +69,4 @@ def run_throughput_test():
 
 
 if __name__ == "__main__":
-    def onconnect(socket):
-        print("on connect got called")
-        socket.emit('sampleClientEvent', {'message': 'This is an object with a message property'})
-
-
-    def ondisconnect(socket):
-        print("on disconnect got called")
-
-
-    def onConnectError(socket, error):
-        print("On connect error got called")
-
-    socket = Socketcluster.socket("ws://127.0.0.1:8000/socketcluster/")
-    socket.setBasicListener(onconnect, ondisconnect, onConnectError)
-    socket.enablelogger(True)
-    socket.connect()
+    run_max_conn_test()
