@@ -20,7 +20,8 @@ servers = [
 
 def write_conn_times():
     with open('conn_times.txt', 'w') as f:
-        for conn_time in conn_times:
+        for task_id, conn_time in conn_times.items():
+            print(f"Task {task_id} was connected")
             f.write(f"{str(conn_time.timestamp())}, 1\n")
 
 
