@@ -4,35 +4,51 @@ from matplotlib import pyplot
 import arrow
 
 
-def load_conn_times(filename):
-    # TODO: Sort on times
+def load_conn_times(filenames):
     time_conn_cuml = {}
     i = 1
     start_time = None
-    with open(filename) as f:
-        for line in f:
-            time, _ = line.split(', ')
-            time = arrow.get(time)
-            if start_time is None:
-                start_time = time
-            seconds_from_start = (time - start_time).total_seconds()
-            time_conn_cuml[seconds_from_start] = i
-            i += 1
+
+    conn_times = []
+
+    for filename in filenames:
+        with open(filename) as f:
+            for line in f:
+                time, _ = line.split(', ')
+                time = arrow.get(time)
+                conn_times.append(time)
+
+    conn_times_sorted = sorted(conn_times)
+
+    for time in conn_times_sorted:
+        if start_time is None:
+            start_time = time
+        seconds_from_start = (time - start_time).total_seconds()
+        time_conn_cuml[seconds_from_start] = i
+        i += 1
     return time_conn_cuml
 
 
-def load_ping_times(filename):
+def load_ping_times(filenames):
     response_by_time = {}
 
+    response_times = []
+
+    for filename in filenames:
+        with open(filename) as f:
+            for line in f:
+                req_ts, res_ts, _ = line.split(', ')
+                req_time, res_time = arrow.get(req_ts), arrow.get(res_ts)
+                response_times.append(res_time)
+
+    response_times = sorted(response_times)
+
     start_time = None
-    with open(filename) as f:
-        for line in f:
-            req_ts, res_ts, _ = line.split(', ')
-            req_time, res_time = arrow.get(req_ts), arrow.get(res_ts)
-            if start_time is None:
-                start_time = req_time
-            resp_delta_sec = math.floor((res_time - start_time).total_seconds())
-            response_by_time[resp_delta_sec] = response_by_time.get(resp_delta_sec, 0) + 1
+    for resp_time in response_times:
+        if start_time is None:
+            start_time = resp_time
+        resp_delta_sec = math.floor((resp_time - start_time).total_seconds())
+        response_by_time[resp_delta_sec] = response_by_time.get(resp_delta_sec, 0) + 1
 
     return response_by_time
 
@@ -51,8 +67,8 @@ def plot_ping_times(timedelta_to_pingcount):
 
 
 def main():
-    plot_conn_times(load_conn_times('conn_times_sc_1_3k.txt'))
-    plot_conn_times(load_conn_times('conn_times_ava_1_10k.txt'))
+    # plot_conn_times(load_conn_times(["p_1_conn_times_sc_1_10k.txt", "p_2_conn_times_sc_1_10k.txt"]))
+    plot_ping_times(load_ping_times(["ping_times.txt"]))
 
 
 if __name__ == "__main__":
