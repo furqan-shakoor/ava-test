@@ -113,4 +113,4 @@ def run_throughput_test():
 
 
 if __name__ == "__main__":
-    run_throughput_test()
+    run_max_conn_test()

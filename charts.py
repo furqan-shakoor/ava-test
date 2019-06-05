@@ -50,6 +50,7 @@ def load_ping_times(filenames):
         resp_delta_sec = math.floor((resp_time - start_time).total_seconds())
         response_by_time[resp_delta_sec] = response_by_time.get(resp_delta_sec, 0) + 1
 
+    print(response_by_time)
     return response_by_time
 
 
@@ -62,7 +63,8 @@ def plot_conn_times(time_conn_cuml):
 
 def plot_ping_times(timedelta_to_pingcount):
     pyplot.plot(list(timedelta_to_pingcount.keys()), list(timedelta_to_pingcount.values()))
-    # pyplot.ylim(0, 1000)
+    pyplot.ylim(0, 7000)
+    pyplot.xlim(0, 10)
     pyplot.show()
 
 
@@ -71,6 +73,9 @@ def main():
     plot_ping_times(load_ping_times(["ping_times_sc_500processes_1server.txt"]))
     plot_ping_times(load_ping_times(["ping_times_sc_500processes_2server.txt"]))
     plot_ping_times(load_ping_times(["ping_times_sc_500processes_3server.txt"]))
+    plot_ping_times(load_ping_times(["ping_times_ava_500processes_1server.txt"]))
+    plot_ping_times(load_ping_times(["ping_times_ava_500processes_2server.txt"]))
+    plot_ping_times(load_ping_times(["ping_times_ava_500processes_3server.txt"]))
 
 
 if __name__ == "__main__":
