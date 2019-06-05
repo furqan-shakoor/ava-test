@@ -64,8 +64,8 @@ async def connect_and_ping(task_name, task_number, sleep_time):
 
 
 def run_max_conn_test():
-    pool = ThreadPoolExecutor(max_workers=3000)
-    for i in range(3000):
+    pool = ThreadPoolExecutor(max_workers=5000)
+    for i in range(5000):
         pool.submit(connect_and_wait, i)
     return pool
 
