@@ -1,6 +1,9 @@
 import asyncio
 import random
+import time
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
+
 from socketclusterclient import Socketcluster
 
 import websockets
@@ -11,7 +14,7 @@ ping_times = []
 servers = [
     "139.59.136.182",
     "165.22.89.205",
-    "165.227.167.134"
+    #"165.227.167.134"
 ]
 
 
@@ -27,12 +30,21 @@ def write_ping_times():
             f.write(f"{str(request_time.timestamp())}, {str(response_time.timestamp())}, 1\n")
 
 
-async def connect_and_wait(task_name, task_number):
-    ip = random.choice(servers)
-    port = 80
-    websocket = await websockets.connect(f"ws://{ip}:{port}")
-    conn_times.append(datetime.now())
-    await websocket.recv()
+def connect_and_wait():
+    def onconnect(socket):
+        print("CONNECTED")
+        conn_times.append(datetime.now())
+
+    def ondisconnect(socket):
+        print("DISCONNECTED")
+
+    def onConnectError(socket, error):
+        print(f"ERROR {error}")
+
+    socket = Socketcluster.socket(f"ws://{random.choice(servers)}:80/socketcluster/")
+    socket.setBasicListener(onconnect, ondisconnect, onConnectError)
+    socket.enablelogger(True)
+    socket.connect()
 
 
 async def connect_and_ping(task_name, task_number, sleep_time):
@@ -50,13 +62,9 @@ async def connect_and_ping(task_name, task_number, sleep_time):
 
 
 def run_max_conn_test():
-    tasks = []
-    for i in range(1):
-        tasks.append(connect_and_wait(f"task_{i}", i))
-    try:
-        asyncio.get_event_loop().run_until_complete(asyncio.wait(tasks))
-    finally:
-        write_conn_times()
+    pool = ThreadPoolExecutor(max_workers=10000)
+    for i in range(10000):
+        pool.submit(connect_and_wait)
 
 
 def run_throughput_test():
@@ -70,19 +78,9 @@ def run_throughput_test():
 
 
 if __name__ == "__main__":
-    def onconnect(socket):
-        print("on connect got called")
-        socket.emit('sampleClientEvent', {'message': 'This is an object with a message property'})
-
-
-    def ondisconnect(socket):
-        print("on disconnect got called")
-
-
-    def onConnectError(socket, error):
-        print("On connect error got called")
-
-    socket = Socketcluster.socket("ws://127.0.0.1:8000/socketcluster/")
-    socket.setBasicListener(onconnect, ondisconnect, onConnectError)
-    socket.enablelogger(True)
-    socket.connect()
+    try:
+        run_max_conn_test()
+    finally:
+        time.sleep(20)
+        print("Writing results")
+        write_conn_times()
